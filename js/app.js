@@ -34,6 +34,25 @@
   var favorites = load(FAV_KEY);
   var hidden = load(HIDDEN_KEY);
 
+  // Re-read storage and repaint. Navigating back from a recipe page usually restores
+  // the homepage from the back/forward cache, which does NOT re-run scripts — so
+  // without this the page would still show the state it had when you left it.
+  var rerender = function () {};
+
+  function refreshFromStorage() {
+    favorites = load(FAV_KEY);
+    hidden = load(HIDDEN_KEY);
+    rerender();
+  }
+
+  window.addEventListener("pageshow", function (e) {
+    if (e.persisted) refreshFromStorage();
+  });
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") refreshFromStorage();
+  });
+
   document.addEventListener("DOMContentLoaded", function () {
     var isIndex = !!document.getElementById("searchInput");
     if (isIndex) initIndex();
@@ -78,6 +97,7 @@
         sync();
       });
     }
+    rerender = sync;
     sync();
   }
 
@@ -291,6 +311,11 @@
     }
 
     searchInput.addEventListener("input", applyFilters);
+
+    rerender = function () {
+      cards.forEach(syncCard);
+      applyFilters();
+    };
     applyFilters();
   }
 })();
