@@ -84,6 +84,106 @@ a {
   backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--border);
   padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* ---------- Sync ---------- */
+
+.sync-btn {
+  min-height: 36px;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--fg-soft);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sync-btn.is-on {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.sync-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(20, 16, 12, 0.45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4rem 1.25rem 1.25rem;
+}
+
+.sync-card {
+  width: 100%;
+  max-width: 26rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lift);
+  padding: 1.25rem;
+}
+
+.sync-card h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.15rem;
+}
+
+.sync-copy {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--fg-soft);
+}
+
+.sync-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+#syncEmail {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  font: inherit;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  color: var(--fg);
+  margin-bottom: 0.75rem;
+}
+
+.sync-submit {
+  width: 100%;
+  min-height: 44px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sync-submit.is-secondary {
+  background: var(--surface-alt);
+  color: var(--fg-soft);
+}
+
+.sync-message {
+  margin: 0.85rem 0 0;
+  font-size: 0.85rem;
+  color: var(--fg-soft);
 }
 
 .site-title {

@@ -34,9 +34,9 @@ npm run build   # build to _site/
 **Favorites and hiding:** the ★ and ✕ buttons on each card (and on recipe pages) mark
 favorites and hide recipes from the homepage. The **All / Favorites / Hidden** tabs switch
 between views, and anything hidden can be un-hidden from the Hidden tab. This state lives
-in the browser's `localStorage`, so it is **per-device** — it does not sync between your
-phone and laptop, and clearing site data resets it. For favorites that travel with the
-repo, add a `favorite` tag in frontmatter instead.
+in the browser's `localStorage`, so by default it is **per-device**. To sync it across
+your phone and laptop, connect Supabase — see [SUPABASE.md](SUPABASE.md). Until that is
+configured the Sync button stays hidden and nothing else changes.
 
 **Suggested v2 ideas:**
 - Step-by-step "cook mode" with one step per screen
@@ -50,7 +50,8 @@ repo, add a `favorite` tag in frontmatter instead.
 /techniques/<slug>.md           Cooking principles and reference material
 /images/                        Recipe photos
 /_includes/                     Eleventy layouts (base.njk, recipe.njk)
-/css/, /js/                     Site styling and client-side search/filter
+/css/, /js/                     Site styling, search/filter, favorites store
+/supabase/schema.sql            Table + row-level security for cross-device sync
 index.njk                       Homepage: recipes grouped by category + techniques
 .eleventy.js                    Eleventy config
 .github/workflows/deploy.yml    Build + deploy to GitHub Pages on push to main

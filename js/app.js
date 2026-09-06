@@ -1,62 +1,25 @@
 /*
- * Favorites and hidden recipes are stored in this browser's localStorage, keyed by
- * the recipe's URL. They are per-device: they do not sync between your phone and
- * laptop, and clearing site data clears them.
+ * Page behaviour: filtering, search, and the favorite/hide controls.
+ * All persistence lives in js/store.js (RecipeBox).
  */
 (function () {
-  var FAV_KEY = "recipebox:favorites";
-  var HIDDEN_KEY = "recipebox:hidden";
-
-  function load(key) {
-    try {
-      var raw = window.localStorage.getItem(key);
-      var parsed = raw ? JSON.parse(raw) : [];
-      return new Set(Array.isArray(parsed) ? parsed : []);
-    } catch (e) {
-      return new Set();
-    }
-  }
-
-  function save(key, set) {
-    try {
-      window.localStorage.setItem(key, JSON.stringify(Array.from(set)));
-    } catch (e) {
-      /* private mode or storage disabled — the page still works, just without memory */
-    }
-  }
-
-  function toggle(set, key, value) {
-    if (set.has(value)) set.delete(value);
-    else set.add(value);
-    save(key, set);
-  }
-
-  var favorites = load(FAV_KEY);
-  var hidden = load(HIDDEN_KEY);
-
-  // Re-read storage and repaint. Navigating back from a recipe page usually restores
-  // the homepage from the back/forward cache, which does NOT re-run scripts — so
-  // without this the page would still show the state it had when you left it.
-  var rerender = function () {};
-
-  function refreshFromStorage() {
-    favorites = load(FAV_KEY);
-    hidden = load(HIDDEN_KEY);
-    rerender();
-  }
-
-  window.addEventListener("pageshow", function (e) {
-    if (e.persisted) refreshFromStorage();
-  });
-
-  document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState === "visible") refreshFromStorage();
-  });
+  var store = window.RecipeBox;
+  if (!store) return;
 
   document.addEventListener("DOMContentLoaded", function () {
-    var isIndex = !!document.getElementById("searchInput");
-    if (isIndex) initIndex();
+    store.init();
+    initSyncPanel();
+    if (document.getElementById("searchInput")) initIndex();
     else initDetail();
+  });
+
+  // A page restored from the back/forward cache does not re-run scripts, so
+  // re-read storage and repaint whenever it comes back into view.
+  window.addEventListener("pageshow", function (e) {
+    if (e.persisted) store.refreshLocal();
+  });
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") store.refreshLocal();
   });
 
   /* ---------- Recipe detail page ---------- */
@@ -71,13 +34,13 @@
 
     function sync() {
       if (favBtn) {
-        var fav = favorites.has(key);
+        var fav = store.isFavorite(key);
         favBtn.setAttribute("aria-pressed", fav ? "true" : "false");
         favBtn.classList.toggle("is-on", fav);
         favBtn.querySelector(".btn-label").textContent = fav ? "Favorited" : "Favorite";
       }
       if (hideBtn) {
-        var isHidden = hidden.has(key);
+        var isHidden = store.isHidden(key);
         hideBtn.classList.toggle("is-on", isHidden);
         hideBtn.querySelector(".btn-label").textContent = isHidden
           ? "Hidden from home"
@@ -87,17 +50,15 @@
 
     if (favBtn) {
       favBtn.addEventListener("click", function () {
-        toggle(favorites, FAV_KEY, key);
-        sync();
+        store.toggleFavorite(key);
       });
     }
     if (hideBtn) {
       hideBtn.addEventListener("click", function () {
-        toggle(hidden, HIDDEN_KEY, key);
-        sync();
+        store.toggleHidden(key);
       });
     }
-    rerender = sync;
+    store.subscribe(sync);
     sync();
   }
 
@@ -172,18 +133,14 @@
         favBtn.addEventListener("click", function (e) {
           e.preventDefault();
           e.stopPropagation();
-          toggle(favorites, FAV_KEY, key);
-          syncCard(card);
-          applyFilters();
+          store.toggleFavorite(key);
         });
       }
       if (hideBtn) {
         hideBtn.addEventListener("click", function (e) {
           e.preventDefault();
           e.stopPropagation();
-          toggle(hidden, HIDDEN_KEY, key);
-          syncCard(card);
-          applyFilters();
+          store.toggleHidden(key);
         });
       }
       syncCard(card);
@@ -191,8 +148,8 @@
 
     function syncCard(card) {
       var key = card.dataset.key;
-      var fav = favorites.has(key);
-      var isHidden = hidden.has(key);
+      var fav = store.isFavorite(key);
+      var isHidden = store.isHidden(key);
       var favBtn = card.querySelector(".js-fav");
       var hideBtn = card.querySelector(".js-hide");
 
@@ -223,12 +180,11 @@
     }
 
     function updateCounts() {
-      var favCount = cards.filter(function (c) {
-        return favorites.has(c.dataset.key);
-      }).length;
-      var hiddenCount = cards.filter(function (c) {
-        return hidden.has(c.dataset.key);
-      }).length;
+      var keys = cards.map(function (c) {
+        return c.dataset.key;
+      });
+      var favCount = store.countFavorites(keys);
+      var hiddenCount = store.countHidden(keys);
       var favEl = document.querySelector('[data-count="favorites"]');
       var hidEl = document.querySelector('[data-count="hidden"]');
       if (favEl) favEl.textContent = favCount;
@@ -251,11 +207,11 @@
 
         var matchesView;
         if (view === "favorites") {
-          matchesView = favorites.has(key) && !hidden.has(key);
+          matchesView = store.isFavorite(key) && !store.isHidden(key);
         } else if (view === "hidden") {
-          matchesView = hidden.has(key);
+          matchesView = store.isHidden(key);
         } else {
-          matchesView = !hidden.has(key);
+          matchesView = !store.isHidden(key);
         }
 
         var visible = matchesSearch && matchesTags && matchesView;
@@ -312,10 +268,80 @@
 
     searchInput.addEventListener("input", applyFilters);
 
-    rerender = function () {
+    store.subscribe(function () {
       cards.forEach(syncCard);
       applyFilters();
-    };
+    });
     applyFilters();
+  }
+
+  /* ---------- Sync panel ---------- */
+
+  function initSyncPanel() {
+    var btn = document.getElementById("syncBtn");
+    var panel = document.getElementById("syncPanel");
+    if (!btn || !panel) return;
+
+    // With no Supabase credentials the button stays hidden and the site is
+    // exactly as it was: this browser only.
+    if (!store.isConfigured()) return;
+    btn.hidden = false;
+
+    var form = panel.querySelector("form");
+    var emailInput = panel.querySelector("#syncEmail");
+    var message = panel.querySelector("#syncMessage");
+    var signedIn = panel.querySelector("#syncSignedIn");
+    var signedOut = panel.querySelector("#syncSignedOut");
+    var whoami = panel.querySelector("#syncWho");
+    var signOutBtn = panel.querySelector("#syncSignOut");
+
+    function render() {
+      var s = store.getStatus();
+      var isSignedIn = s.status === "synced" && store.getEmail();
+      signedIn.hidden = !isSignedIn;
+      signedOut.hidden = isSignedIn;
+      if (isSignedIn) whoami.textContent = store.getEmail();
+      btn.classList.toggle("is-on", isSignedIn);
+      if (s.status === "error") {
+        message.textContent = s.detail;
+        message.hidden = false;
+      }
+    }
+
+    btn.addEventListener("click", function () {
+      panel.hidden = !panel.hidden;
+      if (!panel.hidden) render();
+    });
+
+    panel.addEventListener("click", function (e) {
+      if (e.target === panel) panel.hidden = true;
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var email = emailInput.value.trim();
+      if (!email) return;
+      message.hidden = false;
+      message.textContent = "Sending…";
+      store
+        .signIn(email)
+        .then(function () {
+          message.textContent =
+            "Check " + email + " for a sign-in link. Open it on this device.";
+        })
+        .catch(function (err) {
+          message.textContent = err.message || "Could not send the link.";
+        });
+    });
+
+    signOutBtn.addEventListener("click", function () {
+      store.signOut().then(function () {
+        message.hidden = true;
+        render();
+      });
+    });
+
+    store.subscribe(render);
+    render();
   }
 })();
