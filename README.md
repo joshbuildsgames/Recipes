@@ -42,6 +42,7 @@ npm run build   # build to _site/
 ```
 /recipes/<category>/<slug>.md   Recipes, grouped by main protein or type
 /techniques/<slug>.md           Cooking principles and reference material
+/images/                        Recipe photos
 /_includes/                     Eleventy layouts (base.njk, recipe.njk)
 /css/, /js/                     Site styling and client-side search/filter
 index.njk                       Homepage: recipes grouped by category + techniques
@@ -53,6 +54,19 @@ index.njk                       Homepage: recipes grouped by category + techniqu
 
 Workflow: paste a screenshot or link into a Claude Code session, have it transcribe
 into the frontmatter format below, drop it in the right category folder, commit.
+
+## Adding a photo
+
+Share the image in a Claude Code session and ask for it to be attached to a recipe.
+It gets saved to `images/<slug>.jpg` and the recipe's `image:` field is set to point
+at it. Photos appear as a hero image on the recipe page and a thumbnail on the index.
+
+Doing it by hand: drop the file in `images/`, then add `image: /images/<file>` to the
+recipe's frontmatter. Always write the path with a leading `/images/` — the build adds
+the site's path prefix. Recipes without a photo render fine; the card is text-only.
+
+Keep photos reasonably sized (roughly 1600px wide, under ~500KB). They are committed to
+the repo, so full-resolution phone photos will bloat it quickly.
 
 ## Frontmatter schema
 
@@ -66,6 +80,8 @@ time_total: 60
 servings: 2
 source: original
 rating: 5
+image: /images/filet-mignon.jpg   # optional
+image_alt: Sliced filet with sauce # optional, defaults to the title
 macros:      # reserved, v2
 ---
 ```
@@ -73,8 +89,10 @@ macros:      # reserved, v2
 Field notes:
 - `category` matches the folder name
 - `rating` 1–5, personal
-- `source` a URL, a publication name, or `original`
+- `source` a URL, a publication name, or `original`. URLs render as a clickable link
+  showing the domain; `original` renders as "Original recipe"
 - `time_total` in minutes, including resting and prep
+- `image` / `image_alt` optional, see above
 
 ## House conventions
 
@@ -82,6 +100,15 @@ Field notes:
 - Write pan temperature targets explicitly — this cookbook is built around heat control
 - Note where a step is failure-prone and why, not just what to do
 - Keep personal notes in a `## Notes` section at the bottom of each recipe
+
+## Path prefix
+
+The site is served from `https://<user>.github.io/Recipes/`, not the domain root, so
+`.eleventy.js` sets `pathPrefix: "/Recipes/"` and every internal link in a template goes
+through Eleventy's `url` filter (`{{ item.url | url }}`). Writing a bare `/css/...` or
+`/recipes/...` link produces a 404 on the live site.
+
+**If the repository is ever renamed, update `pathPrefix` to match.**
 
 ## Enabling GitHub Pages (one-time)
 

@@ -2,6 +2,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
     var sections = Array.prototype.slice.call(document.querySelectorAll(".category-group"));
+    var blocks = Array.prototype.slice.call(document.querySelectorAll(".collection-block"));
     var searchInput = document.getElementById("searchInput");
     var tagFiltersEl = document.getElementById("tagFilters");
     var noResults = document.getElementById("noResults");
@@ -54,8 +55,9 @@
 
       cards.forEach(function (card) {
         var tags = (card.dataset.tags || "").split(",").filter(Boolean);
-        var title = card.querySelector("h3").textContent.toLowerCase();
-        var matchesSearch = !q || title.indexOf(q) !== -1;
+        var title = (card.dataset.title || "").toLowerCase();
+        var matchesSearch =
+          !q || title.indexOf(q) !== -1 || tags.join(" ").indexOf(q) !== -1;
         var matchesTags = Array.from(selected).every(function (t) {
           return tags.indexOf(t) !== -1;
         });
@@ -71,6 +73,15 @@
             return !c.hidden;
           });
         section.hidden = !sectionHasVisible;
+      });
+
+      blocks.forEach(function (block) {
+        var blockHasVisible = Array.prototype.slice
+          .call(block.querySelectorAll(".card"))
+          .some(function (c) {
+            return !c.hidden;
+          });
+        block.hidden = !blockHasVisible;
       });
 
       if (noResults) noResults.hidden = anyVisible;

@@ -2,26 +2,65 @@
 layout: base.njk
 ---
 <article class="detail">
-  <a class="back-link" href="/">&larr; All recipes</a>
+  <a class="back-link" href="{{ '/' | url }}">
+    <span aria-hidden="true">&larr;</span> All recipes
+  </a>
+
+  {% if image %}
+  <figure class="hero">
+    <img src="{{ image | url }}" alt="{{ image_alt or title }}" loading="lazy">
+  </figure>
+  {% endif %}
+
   <h1>{{ title }}</h1>
-  {% if time_total or servings or rating or source %}
+
+  {% if time_total or servings or rating %}
   <div class="meta-bar">
-    {% if time_total %}<span class="meta-item">{{ time_total }} min</span>{% endif %}
-    {% if servings %}<span class="meta-item">Serves {{ servings }}</span>{% endif %}
-    {% if rating %}<span class="meta-item">★ {{ rating }}/5</span>{% endif %}
-    {% if source %}<span class="meta-item">Source: {{ source }}</span>{% endif %}
+    {% if time_total %}
+    <span class="meta-item">
+      <span class="meta-label">Time</span>
+      <span class="meta-value">{{ time_total }} min</span>
+    </span>
+    {% endif %}
+    {% if servings %}
+    <span class="meta-item">
+      <span class="meta-label">Serves</span>
+      <span class="meta-value">{{ servings }}</span>
+    </span>
+    {% endif %}
+    {% if rating %}
+    <span class="meta-item">
+      <span class="meta-label">Rating</span>
+      <span class="meta-value stars" aria-label="{{ rating }} out of 5">
+        {%- for i in range(1, 6) -%}
+          <span class="star{% if i <= rating %} star-on{% endif %}" aria-hidden="true">★</span>
+        {%- endfor -%}
+      </span>
+    </span>
+    {% endif %}
   </div>
   {% endif %}
-  {% if cookware and cookware.length %}
+
+  {% if source %}
+  <p class="source-line">
+    <span class="source-label">Source</span>
+    {% if source | isUrl %}
+      <a href="{{ source }}" rel="noopener noreferrer" target="_blank">{{ source | displayUrl }}</a>
+    {% elif source == "original" %}
+      <span class="source-original">Original recipe</span>
+    {% else %}
+      <span>{{ source }}</span>
+    {% endif %}
+  </p>
+  {% endif %}
+
+  {% if cookware and cookware.length or tags and tags.length %}
   <div class="pills">
     {% for c in cookware %}<span class="pill pill-cookware">{{ c }}</span>{% endfor %}
-  </div>
-  {% endif %}
-  {% if tags and tags.length %}
-  <div class="pills">
     {% for t in tags %}<span class="pill pill-tag">{{ t }}</span>{% endfor %}
   </div>
   {% endif %}
+
   <div class="markdown-content">
     {{ content | stripLeadingH1 | safe }}
   </div>
