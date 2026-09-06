@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if title %}{{ title }} · {% endif %}Recipe Box</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a href="/" class="site-title">Recipe Box</a>
+</header>
+<main class="site-main">
+{{ content | safe }}
+</main>
+<footer class="site-footer">
+  <p>Personal cookbook &middot; built with Eleventy</p>
+</footer>
+<script src="/js/app.js" defer></script>
+</body>
+</html>

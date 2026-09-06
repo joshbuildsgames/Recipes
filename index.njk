@@ -1,0 +1,48 @@
+---
+layout: base.njk
+title: Recipes
+permalink: /index.html
+eleventyExcludeFromCollections: true
+---
+<div class="toolbar">
+  <input type="search" id="searchInput" placeholder="Search recipes and techniques…" aria-label="Search recipes and techniques">
+  <div class="tag-filters" id="tagFilters"></div>
+</div>
+
+<h1 class="section-heading">Recipes</h1>
+{% set recipesByCategory = collections.recipe | groupByCategory %}
+{% for category, items in recipesByCategory %}
+<section class="category-group" data-category="{{ category }}">
+  <h2>{{ category | capitalize }}</h2>
+  <div class="card-grid">
+    {% for item in items %}
+    <a class="card" href="{{ item.url }}" data-tags="{{ (item.data.tags or []) | join(',') }}">
+      <h3>{{ item.data.title }}</h3>
+      <p class="card-meta">
+        {%- if item.data.time_total %}{{ item.data.time_total }} min{% endif -%}
+        {%- if item.data.rating %} &middot; ★{{ item.data.rating }}{% endif -%}
+      </p>
+      <div class="pills">
+        {% for t in (item.data.tags or []) %}<span class="pill pill-tag">{{ t }}</span>{% endfor %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
+
+<h1 class="section-heading">Techniques</h1>
+<section class="category-group" data-category="technique">
+  <div class="card-grid">
+    {% for item in (collections.technique | sortByTitle) %}
+    <a class="card" href="{{ item.url }}" data-tags="{{ (item.data.tags or []) | join(',') }}">
+      <h3>{{ item.data.title }}</h3>
+      <div class="pills">
+        {% for t in (item.data.tags or []) %}<span class="pill pill-tag">{{ t }}</span>{% endfor %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<p id="noResults" class="no-results" hidden>No matches. Try a different search or clear the tag filters.</p>

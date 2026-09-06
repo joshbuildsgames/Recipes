@@ -1,0 +1,28 @@
+---
+layout: base.njk
+---
+<article class="detail">
+  <a class="back-link" href="/">&larr; All recipes</a>
+  <h1>{{ title }}</h1>
+  {% if time_total or servings or rating or source %}
+  <div class="meta-bar">
+    {% if time_total %}<span class="meta-item">{{ time_total }} min</span>{% endif %}
+    {% if servings %}<span class="meta-item">Serves {{ servings }}</span>{% endif %}
+    {% if rating %}<span class="meta-item">★ {{ rating }}/5</span>{% endif %}
+    {% if source %}<span class="meta-item">Source: {{ source }}</span>{% endif %}
+  </div>
+  {% endif %}
+  {% if cookware and cookware.length %}
+  <div class="pills">
+    {% for c in cookware %}<span class="pill pill-cookware">{{ c }}</span>{% endfor %}
+  </div>
+  {% endif %}
+  {% if tags and tags.length %}
+  <div class="pills">
+    {% for t in tags %}<span class="pill pill-tag">{{ t }}</span>{% endfor %}
+  </div>
+  {% endif %}
+  <div class="markdown-content">
+    {{ content | stripLeadingH1 | safe }}
+  </div>
+</article>
