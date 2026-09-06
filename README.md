@@ -31,6 +31,13 @@ npm run build   # build to _site/
 4. Mobile-first layout — large tap targets, readable at arm's length, no hover-dependent UI.
 5. GitHub Action (`.github/workflows/deploy.yml`) to build and deploy on push to `main`.
 
+**Favorites and hiding:** the ★ and ✕ buttons on each card (and on recipe pages) mark
+favorites and hide recipes from the homepage. The **All / Favorites / Hidden** tabs switch
+between views, and anything hidden can be un-hidden from the Hidden tab. This state lives
+in the browser's `localStorage`, so it is **per-device** — it does not sync between your
+phone and laptop, and clearing site data resets it. For favorites that travel with the
+repo, add a `favorite` tag in frontmatter instead.
+
 **Suggested v2 ideas:**
 - Step-by-step "cook mode" with one step per screen
 - Scaling servings

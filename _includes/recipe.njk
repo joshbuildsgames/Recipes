@@ -1,10 +1,21 @@
 ---
 layout: base.njk
 ---
-<article class="detail">
-  <a class="back-link" href="{{ '/' | url }}">
-    <span aria-hidden="true">&larr;</span> All recipes
-  </a>
+<article class="detail" data-key="{{ page.url }}">
+  <div class="detail-top">
+    <a class="back-link" href="{{ '/' | url }}">
+      <span aria-hidden="true">&larr;</span> All recipes
+    </a>
+    <div class="detail-actions">
+      <button type="button" class="pill-btn js-fav" aria-pressed="false">
+        <span class="icon-star" aria-hidden="true">★</span>
+        <span class="btn-label">Favorite</span>
+      </button>
+      <button type="button" class="pill-btn js-hide">
+        <span class="btn-label">Hide</span>
+      </button>
+    </div>
+  </div>
 
   {% if image %}
   <figure class="hero">

@@ -38,6 +38,12 @@
   box-sizing: border-box;
 }
 
+/* Must win over the display rules below — .card sets display:flex, which would
+   otherwise beat the user-agent's [hidden] { display: none }. */
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }
@@ -209,6 +215,135 @@ a {
   margin: 1.6rem 0 0.7rem;
 }
 
+/* ---------- View tabs ---------- */
+
+.view-tabs {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.25rem;
+  background: var(--surface-alt);
+  border-radius: 999px;
+  margin-bottom: 0.85rem;
+}
+
+.view-tab {
+  flex: 1;
+  min-height: 40px;
+  padding: 0.45rem 0.6rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg-soft);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+.view-tab.is-active {
+  background: var(--surface);
+  color: var(--fg);
+  box-shadow: var(--shadow);
+}
+
+.tab-count {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.view-hint {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ---------- Favorite / hide buttons ---------- */
+
+.card-actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.icon-btn.is-on {
+  color: var(--star);
+  border-color: var(--star);
+}
+
+.js-hide.is-on {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.card.is-favorite {
+  border-color: var(--star);
+}
+
+.detail-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.pill-btn {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--fg-soft);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pill-btn.is-on {
+  color: var(--star);
+  border-color: var(--star);
+}
+
+.js-hide.pill-btn.is-on {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* ---------- Cards ---------- */
 
 .card-grid {
@@ -224,6 +359,7 @@ a {
 }
 
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -231,14 +367,21 @@ a {
   background: var(--surface);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
-  text-decoration: none;
   color: var(--fg);
   transition: box-shadow 0.18s ease, transform 0.18s ease,
     border-color 0.18s ease;
 }
 
+.card-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+}
+
 .card:hover,
-.card:focus-visible {
+.card:focus-within {
   box-shadow: var(--shadow-lift);
   border-color: var(--border-strong);
   transform: translateY(-2px);
@@ -265,6 +408,11 @@ a {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
+}
+
+/* Keep the title clear of the favorite/hide buttons on cards without a photo. */
+.card:not(:has(.card-thumb)) .card-body h3 {
+  padding-right: 5rem;
 }
 
 .card h3 {

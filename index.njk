@@ -5,53 +5,77 @@ permalink: /index.html
 eleventyExcludeFromCollections: true
 ---
 {% macro card(item) %}
-<a class="card" href="{{ item.url | url }}"
+{% set m = item.data.macros %}
+<article class="card"
+   data-key="{{ item.url }}"
    data-tags="{{ (item.data.tags or []) | join(',') }}"
    data-title="{{ item.data.title }}">
-  {% if item.data.image %}
-  <div class="card-thumb">
-    <img src="{{ item.data.image | url }}" alt="{{ item.data.image_alt or item.data.title }}" loading="lazy">
+  <div class="card-actions">
+    <button type="button" class="icon-btn js-fav" aria-pressed="false"
+            aria-label="Favorite {{ item.data.title }}" title="Favorite">
+      <span class="icon-star" aria-hidden="true">★</span>
+    </button>
+    <button type="button" class="icon-btn js-hide"
+            aria-label="Hide {{ item.data.title }}" title="Hide">
+      <span class="icon-hide" aria-hidden="true">✕</span>
+    </button>
   </div>
-  {% endif %}
-  <div class="card-body">
-    <h3>{{ item.data.title }}</h3>
-    {% set m = item.data.macros %}
-    {% if item.data.time_total or item.data.rating or (m and m.calories is defined and m.calories != null) %}
-    <p class="card-meta">
-      {%- if m and m.calories is defined and m.calories != null %}<span class="card-macro">{{ m.calories }} cal</span>{% endif -%}
-      {%- if m and m.protein %}<span class="card-macro">{{ m.protein }} protein</span>{% endif -%}
-      {%- if item.data.time_total %}<span>{{ item.data.time_total }} min</span>{% endif -%}
-      {%- if item.data.rating %}<span class="stars" aria-label="{{ item.data.rating }} out of 5">
-        {%- for i in range(1, 6) -%}
-          <span class="star{% if i <= item.data.rating %} star-on{% endif %}" aria-hidden="true">★</span>
-        {%- endfor -%}
-      </span>{% endif -%}
-    </p>
-    {% endif %}
-    {% if item.data.source %}
-    <p class="card-source">
-      {%- if item.data.source | isUrl -%}
-        {{ item.data.source | displayUrl }}
-      {%- elif item.data.source == "original" -%}
-        Original recipe
-      {%- else -%}
-        {{ item.data.source }}
-      {%- endif -%}
-    </p>
-    {% endif %}
-    <div class="pills">
-      {% for t in (item.data.tags or []) %}<span class="pill pill-tag">{{ t }}</span>{% endfor %}
+  <a class="card-link" href="{{ item.url | url }}">
+    {% if item.data.image %}
+    <div class="card-thumb">
+      <img src="{{ item.data.image | url }}" alt="{{ item.data.image_alt or item.data.title }}" loading="lazy">
     </div>
-  </div>
-</a>
+    {% endif %}
+    <div class="card-body">
+      <h3>{{ item.data.title }}</h3>
+      {% if item.data.time_total or item.data.rating or (m and m.calories is defined and m.calories != null) %}
+      <p class="card-meta">
+        {%- if m and m.calories is defined and m.calories != null %}<span class="card-macro">{{ m.calories }} cal</span>{% endif -%}
+        {%- if m and m.protein %}<span class="card-macro">{{ m.protein }} protein</span>{% endif -%}
+        {%- if item.data.time_total %}<span>{{ item.data.time_total }} min</span>{% endif -%}
+        {%- if item.data.rating %}<span class="stars" aria-label="{{ item.data.rating }} out of 5">
+          {%- for i in range(1, 6) -%}
+            <span class="star{% if i <= item.data.rating %} star-on{% endif %}" aria-hidden="true">★</span>
+          {%- endfor -%}
+        </span>{% endif -%}
+      </p>
+      {% endif %}
+      {% if item.data.source %}
+      <p class="card-source">
+        {%- if item.data.source | isUrl -%}
+          {{ item.data.source | displayUrl }}
+        {%- elif item.data.source == "original" -%}
+          Original recipe
+        {%- else -%}
+          {{ item.data.source }}
+        {%- endif -%}
+      </p>
+      {% endif %}
+      <div class="pills">
+        {% for t in (item.data.tags or []) %}<span class="pill pill-tag">{{ t }}</span>{% endfor %}
+      </div>
+    </div>
+  </a>
+</article>
 {% endmacro %}
 
 <div class="toolbar">
+  <div class="view-tabs" id="viewTabs">
+    <button type="button" class="view-tab is-active" data-view="all">All</button>
+    <button type="button" class="view-tab" data-view="favorites">
+      <span class="icon-star" aria-hidden="true">★</span> Favorites <span class="tab-count" data-count="favorites">0</span>
+    </button>
+    <button type="button" class="view-tab" data-view="hidden">
+      Hidden <span class="tab-count" data-count="hidden">0</span>
+    </button>
+  </div>
   <div class="search-wrap">
     <input type="search" id="searchInput" placeholder="Search recipes and techniques…" aria-label="Search recipes and techniques" autocomplete="off">
   </div>
   <div class="tag-filters" id="tagFilters"></div>
 </div>
+
+<p class="view-hint" id="viewHint" hidden></p>
 
 <div class="collection-block">
   <h2 class="section-heading">Recipes</h2>
