@@ -54,6 +54,25 @@ layout: base.njk
   </p>
   {% endif %}
 
+  {% if macros and macros.calories is defined and macros.calories != null %}
+  <section class="macros" aria-label="Nutrition per serving">
+    <header class="macros-head">
+      <h2>Macros</h2>
+      <span class="macros-basis{% if macros.basis == 'estimated' %} is-estimated{% endif %}">
+        {%- if macros.basis == "estimated" %}Estimated{% else %}Per serving{% endif -%}
+      </span>
+    </header>
+    <div class="macro-grid">
+      <div class="macro"><span class="macro-value">{{ macros.calories }}</span><span class="macro-key">cal</span></div>
+      <div class="macro"><span class="macro-value">{{ macros.protein }}</span><span class="macro-key">protein</span></div>
+      <div class="macro"><span class="macro-value">{{ macros.carbs }}</span><span class="macro-key">carbs</span></div>
+      <div class="macro"><span class="macro-value">{{ macros.fat }}</span><span class="macro-key">fat</span></div>
+    </div>
+    {% if macros.serving_size %}<p class="macro-note">Serving size: {{ macros.serving_size }}</p>{% endif %}
+    {% if macros.note %}<p class="macro-note">{{ macros.note }}</p>{% endif %}
+  </section>
+  {% endif %}
+
   {% if cookware and cookware.length or tags and tags.length %}
   <div class="pills">
     {% for c in cookware %}<span class="pill pill-cookware">{{ c }}</span>{% endfor %}

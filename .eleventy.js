@@ -14,6 +14,18 @@ module.exports = function (eleventyConfig) {
     api.getFilteredByGlob("techniques/**/*.md")
   );
 
+  // Categories appear in this order; anything else falls in alphabetically after.
+  const CATEGORY_ORDER = [
+    "shakes",
+    "breakfast",
+    "meal-prep",
+    "beef",
+    "chicken",
+    "turkey",
+    "seafood",
+    "drinks",
+  ];
+
   // Groups a collection into { category: [items] }, each group sorted by title.
   eleventyConfig.addFilter("groupByCategory", (collection) => {
     const groups = {};
@@ -25,7 +37,24 @@ module.exports = function (eleventyConfig) {
     Object.values(groups).forEach((items) =>
       items.sort((a, b) => (a.data.title || "").localeCompare(b.data.title || ""))
     );
-    return groups;
+
+    const rank = (cat) => {
+      const i = CATEGORY_ORDER.indexOf(cat);
+      return i === -1 ? CATEGORY_ORDER.length : i;
+    };
+    const ordered = {};
+    Object.keys(groups)
+      .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
+      .forEach((cat) => {
+        ordered[cat] = groups[cat];
+      });
+    return ordered;
+  });
+
+  // "meal-prep" -> "Meal prep"
+  eleventyConfig.addFilter("categoryName", (cat) => {
+    const s = String(cat || "").replace(/-/g, " ");
+    return s.charAt(0).toUpperCase() + s.slice(1);
   });
 
   eleventyConfig.addFilter("sortByTitle", (collection) =>

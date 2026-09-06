@@ -15,8 +15,11 @@ eleventyExcludeFromCollections: true
   {% endif %}
   <div class="card-body">
     <h3>{{ item.data.title }}</h3>
-    {% if item.data.time_total or item.data.rating %}
+    {% set m = item.data.macros %}
+    {% if item.data.time_total or item.data.rating or (m and m.calories is defined and m.calories != null) %}
     <p class="card-meta">
+      {%- if m and m.calories is defined and m.calories != null %}<span class="card-macro">{{ m.calories }} cal</span>{% endif -%}
+      {%- if m and m.protein %}<span class="card-macro">{{ m.protein }} protein</span>{% endif -%}
       {%- if item.data.time_total %}<span>{{ item.data.time_total }} min</span>{% endif -%}
       {%- if item.data.rating %}<span class="stars" aria-label="{{ item.data.rating }} out of 5">
         {%- for i in range(1, 6) -%}
@@ -55,7 +58,7 @@ eleventyExcludeFromCollections: true
   {% set recipesByCategory = collections.recipe | groupByCategory %}
   {% for category, items in recipesByCategory %}
   <section class="category-group" data-category="{{ category }}">
-    <h3 class="category-heading">{{ category | capitalize }}</h3>
+    <h3 class="category-heading">{{ category | categoryName }}</h3>
     <div class="card-grid">
       {% for item in items %}{{ card(item) }}{% endfor %}
     </div>

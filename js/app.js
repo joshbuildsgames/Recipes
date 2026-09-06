@@ -9,11 +9,16 @@
 
     if (!cards.length || !searchInput || !tagFiltersEl) return;
 
-    var allTags = new Set();
+    // Order filter chips by how many recipes carry each tag, so the most useful
+    // ones sit at the front of the scrolling row.
+    var tagCounts = {};
     cards.forEach(function (card) {
       (card.dataset.tags || "").split(",").filter(Boolean).forEach(function (t) {
-        allTags.add(t);
+        tagCounts[t] = (tagCounts[t] || 0) + 1;
       });
+    });
+    var allTags = Object.keys(tagCounts).sort(function (a, b) {
+      return tagCounts[b] - tagCounts[a] || a.localeCompare(b);
     });
 
     var selected = new Set();
@@ -31,7 +36,7 @@
     });
     tagFiltersEl.appendChild(clearBtn);
 
-    Array.from(allTags).sort().forEach(function (tag) {
+    allTags.forEach(function (tag) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "tag-filter-btn";

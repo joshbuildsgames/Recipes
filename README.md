@@ -22,7 +22,7 @@ npm run build   # build to _site/
 - Recipes are markdown files, not database rows. Readable and portable regardless of what renders them.
 - Static site generator + GitHub Pages. No backend, no auth, no hosting cost.
 - Public repo (required for free GitHub Pages).
-- **Macros are out of scope for v1.** The frontmatter reserves a field; leave it empty.
+- Macros are recorded per serving in frontmatter and rendered on each recipe page.
 
 **v1 scope (implemented):**
 1. Static site generator (Eleventy) producing an index grouped by category, plus a page per recipe.
@@ -32,7 +32,6 @@ npm run build   # build to _site/
 5. GitHub Action (`.github/workflows/deploy.yml`) to build and deploy on push to `main`.
 
 **Suggested v2 ideas:**
-- Macro calculation
 - Step-by-step "cook mode" with one step per screen
 - Scaling servings
 - Timers
@@ -82,7 +81,14 @@ source: original
 rating: 5
 image: /images/filet-mignon.jpg   # optional
 image_alt: Sliced filet with sauce # optional, defaults to the title
-macros:      # reserved, v2
+macros:
+  calories: 415
+  protein: 36g
+  carbs: 30g
+  fat: 7g
+  basis: published        # or "estimated"
+  serving_size: 1.5 cups  # optional
+  note: Macros vary by brand.  # optional
 ---
 ```
 
@@ -93,6 +99,10 @@ Field notes:
   showing the domain; `original` renders as "Original recipe"
 - `time_total` in minutes, including resting and prep
 - `image` / `image_alt` optional, see above
+- `macros` optional. Values are free-form, so ranges like `240–280` work as well as plain
+  numbers. `basis: published` means the numbers came from the recipe's source;
+  `basis: estimated` marks a calculation and renders an "Estimated" badge on the page.
+  Calories and protein also appear on the index cards.
 
 ## House conventions
 

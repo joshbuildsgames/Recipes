@@ -8,6 +8,14 @@ servings: 2
 source: original
 rating: 5
 macros:
+  calories: 850
+  protein: 46g
+  carbs: 12g
+  fat: 63g
+  basis: estimated
+  note: >-
+    Estimated, not measured. Assumes 8 oz raw filet per person and all butter in the
+    recipe divided across 2 servings. The sauce carries roughly a third of the calories.
 ---
 
 # Filet Mignon with Red Wine Mushroom Sauce

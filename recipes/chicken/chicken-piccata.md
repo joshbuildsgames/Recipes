@@ -8,6 +8,14 @@ servings: 4
 source: NYT Cooking (adapted, with stainless-specific technique notes)
 rating:
 macros:
+  calories: 400
+  protein: 41g
+  carbs: 9g
+  fat: 19g
+  basis: estimated
+  note: >-
+    Estimated, not measured. Assumes 1½ lb of cutlets across 4 servings, about a
+    tablespoon of retained flour each, and 3½ tbsp butter split four ways.
 ---
 
 # Chicken Piccata
