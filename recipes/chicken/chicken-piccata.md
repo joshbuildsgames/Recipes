@@ -6,6 +6,8 @@ cookware: [nanobond-stainless]
 time_total: 40
 servings: 4
 source: NYT Cooking (adapted, with stainless-specific technique notes)
+image: /images/chicken-piccata.jpg
+image_alt: Chicken piccata with lemon slices and capers over spaghetti
 rating:
 macros:
   calories: 400
