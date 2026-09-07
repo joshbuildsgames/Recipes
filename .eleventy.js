@@ -23,6 +23,7 @@ module.exports = function (eleventyConfig) {
     "chicken",
     "turkey",
     "seafood",
+    "sauces",
     "drinks",
   ];
 
