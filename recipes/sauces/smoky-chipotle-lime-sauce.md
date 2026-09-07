@@ -4,7 +4,8 @@ category: sauces
 tags: [sauce, no-cook, chicken, spicy, quick]
 time_total: 5
 servings: 2
-source: Instagram — @mattwest_roadtoaesthetics (July 29, 2024)
+source: https://www.instagram.com/reel/C-BH2LVPdmS/
+source_label: Instagram — @hunt4shredz
 rating:
 macros:
   calories: 90

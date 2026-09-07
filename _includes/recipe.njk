@@ -56,7 +56,7 @@ layout: base.njk
   <p class="source-line">
     <span class="source-label">Source</span>
     {% if source | isUrl %}
-      <a href="{{ source }}" rel="noopener noreferrer" target="_blank">{{ source | displayUrl }}</a>
+      <a href="{{ source }}" rel="noopener noreferrer" target="_blank">{{ source_label or (source | displayUrl) }}</a>
     {% elif source == "original" %}
       <span class="source-original">Original recipe</span>
     {% else %}

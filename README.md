@@ -103,8 +103,10 @@ macros:
 Field notes:
 - `category` matches the folder name
 - `rating` 1–5, personal
-- `source` a URL, a publication name, or `original`. URLs render as a clickable link
-  showing the domain; `original` renders as "Original recipe"
+- `source` a URL, a publication name, or `original`. URLs render as a clickable link;
+  `original` renders as "Original recipe"
+- `source_label` optional. Sets the link text for a URL source (e.g. an author's handle)
+  instead of showing the bare domain
 - `time_total` in minutes, including resting and prep
 - `image` / `image_alt` optional, see above
 - `macros` optional. Values are free-form, so ranges like `240–280` work as well as plain

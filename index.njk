@@ -43,7 +43,7 @@ eleventyExcludeFromCollections: true
       {% if item.data.source %}
       <p class="card-source">
         {%- if item.data.source | isUrl -%}
-          {{ item.data.source | displayUrl }}
+          {{ item.data.source_label or (item.data.source | displayUrl) }}
         {%- elif item.data.source == "original" -%}
           Original recipe
         {%- else -%}
