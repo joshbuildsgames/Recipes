@@ -39,6 +39,11 @@ One of three sauces for dressing up plain chicken.
 
 ## Notes
 
+- **Do not scale the garlic with everything else. Four cloves is far too much** — it
+  bullies the avocado and turns harsh. Keep it at one clove, or two at the very most,
+  even when quadrupling the rest.
+- Roasted garlic is the exception. It is mellow and sweet rather than sharp, so a larger
+  amount is probably fine there — worth trying at four roasted cloves.
 - Makes about 1–2 servings. Double or quadruple to scale.
 - The original post listed ingredients only; the method above is the obvious reading.
 - Avocado browns once cut, so this is best made close to serving. The lime juice slows
